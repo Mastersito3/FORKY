@@ -1,13 +1,13 @@
 /* FORKY — service worker.
    IMPORTANTE: sube VERSION cada vez que cambie cualquier archivo de la app;
    así el móvil detecta la versión nueva y muestra el aviso «Actualizar». */
-const VERSION = "forky-1.0.0";
+const VERSION = "forky-1.1.0";
 const FIREBASE = "forky-firebase-13.0.0";   // cambia si cambia FIREBASE_SDK en js/config.js
 
 const APP = [
   "./", "./index.html", "./manifest.webmanifest", "./css/forky.css",
   "./js/app.js", "./js/db.js", "./js/db-claves.js", "./js/config.js", "./js/model.js",
-  "./js/backup.js", "./js/icons.js", "./js/entreno.js", "./js/hoy.js", "./js/hoja.js", "./js/semana-calc.js", "./js/plan-calc.js", "./js/drive.js", "./js/nube.js",
+  "./js/backup.js", "./js/icons.js", "./js/entreno.js", "./js/hoy.js", "./js/hoja.js", "./js/semana-calc.js", "./js/plan-calc.js", "./js/rutina-pdf.js", "./js/drive.js", "./js/nube.js",
   "./icons/icon.svg", "./icons/icon-192.png", "./icons/icon-512.png", "./icons/icon-maskable-512.png",
   "./fonts/orbitron-latin-500-normal.woff2", "./fonts/orbitron-latin-700-normal.woff2",
   "./fonts/rajdhani-latin-500-normal.woff2", "./fonts/rajdhani-latin-600-normal.woff2",

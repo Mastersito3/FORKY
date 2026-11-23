@@ -4,6 +4,7 @@
    Progreso) y nube.js (copia en Google Drive). */
 
 import { APP_VERSION, ajustesPorDefecto, hoyISO, edadEn } from "./model.js";
+import { RUTINA_ID, rutinaParaCargar } from "./rutina-pdf.js";
 import { crearCopia, esCopia, descargar } from "./backup.js";
 import { icon, logo, logoCarga } from "./icons.js";
 import * as EN from "./entreno.js";
@@ -444,6 +445,30 @@ window.addEventListener("online", () => { S.online = true; if (S.user) render();
 window.addEventListener("offline", () => { S.online = false; if (S.user) render(); });
 window.addEventListener("hashchange", () => { const h = location.hash.slice(1); if (TABS.some(t => t.id === h) && h !== S.tab) { S.tab = h; if (S.user) render(); } });
 
+/* ---------- rutina precargada (una vez por cuenta) ---------- */
+/* Solo con datos confirmados por el servidor, para no cargarla dos veces desde
+   dos dispositivos con la caché vacía. No borra ni cambia nada de lo que hay. */
+let cargandoRutina = false;
+function cargarRutina(uid, listo) {
+  if (cargandoRutina || !listo || !S.cargado || !S.ajustes || S.errorPlanes) return;
+  const en = S.ajustes.entreno = S.ajustes.entreno || {};
+  const hechas = en.rutinasCargadas || [];
+  if (hechas.includes(RUTINA_ID)) return;
+  cargandoRutina = true;
+  const yaEsta = S.planes.some(p => p.id === RUTINA_ID);
+  const { ejercicios, plan } = rutinaParaCargar(S.ejercicios);
+  const escrituras = [];
+  if (!yaEsta) {
+    if (ejercicios.length) escrituras.push(DB.guardarVarios(uid, "ejercicios", ejercicios.map(e => [e.id, e])));
+    escrituras.push(DB.guardarDoc(uid, "planes", plan.id, plan));
+    if (!en.planActivo) en.planActivo = plan.id;
+  }
+  en.rutinasCargadas = [...hechas, RUTINA_ID];
+  escrituras.push(DB.guardarAjustes(uid, S.ajustes));
+  Promise.all(escrituras).then(() => { if (!yaEsta) toast("Rutina 4 días cargada: la tienes en Entreno › Planificar.", 5000); },
+    e => { cargandoRutina = false; toast("No se pudo cargar la rutina: " + mensajeError(e), 6000); });
+}
+
 /* ---------- arranque ---------- */
 let pararEscucha = null;
 async function arrancar() {
@@ -462,12 +487,15 @@ async function arrancar() {
     marca("sesion");
     if (pararEscucha) { pararEscucha(); pararEscucha = null; }
     if (!user) { S.user = null; pantallaLogin(); return; }
-    S.user = user; S.cargado = false; esqueleto(); render(); DR.preparar();
+    S.user = user; S.cargado = false; cargandoRutina = false; esqueleto(); render(); DR.preparar();
     if (navigator.storage && navigator.storage.persist) navigator.storage.persist().then(v => { S.persistente = v; }).catch(() => {});
     const recibidos = new Set(), delServidor = new Set();
+    const rutinaLista = () => ["ajustes", "ejercicios", "planes"].every(c => delServidor.has(c));
     pararEscucha = DB.escuchar(user.uid, (nombre, valor, pendiente, desdeCache, error) => {
       if (nombre === "planes") {   // colección nueva: no cuenta para «cargado» y, si falla, la app sigue
         S.planes = valor || []; S.errorPlanes = error ? mensajeError(error) : null; S.pendiente.planes = pendiente;
+        if (!desdeCache && !error) delServidor.add("planes");
+        cargarRutina(user.uid, rutinaLista());
         if (S.cargado) render(); return;
       }
       S.pendiente[nombre] = pendiente;
@@ -485,7 +513,8 @@ async function arrancar() {
       else S[nombre] = valor;
       recibidos.add(nombre);
       S.cargado = recibidos.size >= 3 && !!S.ajustes;
-      if (S.cargado) { marca("datos"); if (delServidor.size >= 3) marca("servidor"); }
+      if (S.cargado) { marca("datos"); if (["ajustes", "ejercicios", "sesiones"].every(c => delServidor.has(c))) marca("servidor"); }
+      cargarRutina(user.uid, rutinaLista());
       render();
     }, e => pantallaLogin(mensajeError(e)));
   });
