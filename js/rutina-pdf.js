@@ -1,6 +1,6 @@
 /* FORKY — rutina precargada «Rutina 4 días» (de la infografía de David).
-   Lunes = Día 1, Martes = Día 2, Jueves = Día 4, Viernes = Día 5;
-   miércoles, sábado y domingo, descanso.
+   Lunes = Día 1, Martes = Día 2, Viernes = Día 5, Domingo = Día 4
+   (David lo prefiere en domingo); miércoles, jueves y sábado, descanso.
    Se carga UNA sola vez por cuenta (marca en ajustes.entreno.rutinasCargadas):
    añade los ejercicios que falten en el catálogo y el plan, sin tocar nada
    de lo que ya hay. Si David borra el plan, no vuelve a aparecer. */
@@ -47,17 +47,17 @@ const DIAS = [
     ["r-aperturas", 2], ["r-press-inclinado", 2], ["r-fondos", 2],
     ["r-laterales", 3], ["r-posterior", 2], ["r-abdominales", 3]] },
   null,
-  { nombre: "Día 4 · Bíceps, espalda y hombro", ej: [
-    ["r-curl-inclinado", 2], ["r-martillo", 3], ["r-barra-z", 2],
-    ["r-face-pull", 2], ["r-jalon", 2], ["r-remo-gironda", 2],
-    ["r-laterales", 3], ["r-abdominales", 3]] },
+  null,
   { nombre: "Día 5 · Tríceps, pecho, hombro y pierna", ej: [
     ["r-trasnuca", 3], ["r-ext-triceps", 3],
     ["r-aperturas", 2], ["r-press-plano", 2],
     ["r-militar", 3],
     ["r-sentadilla", 2], ["r-curl-femoral", 3], ["r-gemelos", 3]] },
   null,
-  null
+  { nombre: "Día 4 · Bíceps, espalda y hombro", ej: [
+    ["r-curl-inclinado", 2], ["r-martillo", 3], ["r-barra-z", 2],
+    ["r-face-pull", 2], ["r-jalon", 2], ["r-remo-gironda", 2],
+    ["r-laterales", 3], ["r-abdominales", 3]] }
 ];
 
 const clave = s => String(s || "").toLocaleLowerCase("es").normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/\s+/g, " ").trim();
