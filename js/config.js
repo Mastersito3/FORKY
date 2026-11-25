@@ -6,12 +6,12 @@
    Mientras estén vacíos, la app solo funciona en el modo de prueba local
    (http://localhost:8765/?local&demo). */
 export const firebaseConfig = {
-  apiKey: "",
-  authDomain: "",
-  projectId: "",
-  storageBucket: "",
-  messagingSenderId: "",
-  appId: ""
+  apiKey: "AIzaSyBVOqtkMJ8_v3Uf4f5PkpkbpPWMsCBOmMs",
+  authDomain: "forky-a02f0.firebaseapp.com",
+  projectId: "forky-a02f0",
+  storageBucket: "forky-a02f0.firebasestorage.app",
+  messagingSenderId: "900968559175",
+  appId: "1:900968559175:web:e12b9c7000e9a6520bf762"
 };
 
 /* Versión del SDK web de Firebase. Si se cambia, hay que subir también la
